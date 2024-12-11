@@ -1,6 +1,5 @@
 package com.devteria.identity_service.dto.respone;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRespone {
-    String token;
-    boolean authenticated; // Neu password dung = true
+public class IntrospectRespone {
+    boolean valid;
 }

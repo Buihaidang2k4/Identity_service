@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-// Cung cap thong tin dang nhap
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL) // anotasion nay cho biet cai nao null not show
-public class AuthenticationRequest {
-    String username;
-    String password;
+// Api  nay khoi tao chuan hoa cho response khi tra ve ket qua
+public class ApiResponse<T> {
+    int code = 1000; //   RESULT SUCCESS
+    String message;
+    T result;
 }

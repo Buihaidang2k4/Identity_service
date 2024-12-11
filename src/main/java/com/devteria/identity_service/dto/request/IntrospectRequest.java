@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL) // anotasion nay cho biet cai nao null not show
-public class AuthenticationRequest {
-    String username;
-    String password;
+public class IntrospectRequest {
+    String token;
 }
