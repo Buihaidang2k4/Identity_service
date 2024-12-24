@@ -1,15 +1,14 @@
 package com.devteria.identity_service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-@Data // tu dong sinh getter, setter, equals, hashCode, toString
+@Setter
+@Getter
 @Builder // Su dung mau thiet ke buider de tao thiet ke user linh hoat
 @NoArgsConstructor // tao constructor  khong tham so
 @AllArgsConstructor // tao mot constructor  co tham so voi full row
@@ -24,4 +23,6 @@ public class User {
     String firstname;
     String lastname;
     LocalDate dob;
+    @ElementCollection
+    Set<String> roles;
 }

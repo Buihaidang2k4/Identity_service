@@ -4,6 +4,7 @@ import com.devteria.identity_service.dto.request.AuthenticationRequest;
 import com.devteria.identity_service.dto.request.IntrospectRequest;
 import com.devteria.identity_service.dto.respone.AuthenticationRespone;
 import com.devteria.identity_service.dto.respone.IntrospectRespone;
+import com.devteria.identity_service.entity.User;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.repository.UserRepository;
@@ -21,11 +22,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Slf4j // create logger
 @Service
@@ -34,7 +37,7 @@ import java.util.Date;
 public class AuthenticationService {
     UserRepository userRepository;
 
-    @NonFinal
+    @NonFinal // ko import vao contructor
     @Value("${jwt.signerKey}") // Bien nay dung doc tu file .yaml
     protected String SIGNER_KEY ;
 
@@ -67,28 +70,30 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        // Create  token
-        var token = generateToken(request.getUsername());
+        // Create  token from generateToken
+        var token = generateToken(user);
         return AuthenticationRespone.builder()
                 .token(token)
                 .authenticated(true)
                 .build();
     }
 
-    private String generateToken(String username) {
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+    //  create token
+    private String generateToken(User user) {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // Thuat toan su dung ma hoa token
 
-        // Body in token
+        // Body in token (data trong body = claims)
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("ANHDANGDEPTRAI.COM") // user issuer
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli() // Thoi gian ton tai
                 ))
-                .claim("userID", "DanThoi")
+                .claim("scope", buidScope(user))
                 .build();
 
+        // Payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);
 
@@ -100,5 +105,17 @@ public class AuthenticationService {
             log.error("Cannot create token", e);
             throw new RuntimeException(e);
         }
+    }
+
+    // Create scope
+    String buidScope(User user) {
+        StringJoiner  stringJoiner = new StringJoiner(" ");
+        // kiem tra empty ko
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(stringJoiner::add);
+        }
+
+        return  stringJoiner.toString();
+
     }
 }
