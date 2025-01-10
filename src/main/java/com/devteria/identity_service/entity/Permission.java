@@ -1,11 +1,9 @@
 package com.devteria.identity_service.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -14,16 +12,10 @@ import java.util.Set;
 @AllArgsConstructor // tao mot constructor  co tham so voi full row
 @FieldDefaults(level = AccessLevel.PRIVATE) // dat tat ca cac truong theo private theo pham vi truy cap
 @Entity // danh dau la mot thuc the duoc anh xa trong csdl
-public class User {
+public class Permission {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // Chuoi ngau nhien
-    String id;
-    String username;
-    String password;
-    String firstname;
-    String lastname;
-    LocalDate dob;
+    String name;
 
-    @ManyToMany
-    Set<Role> roles;
+    String description;
+
 }

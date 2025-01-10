@@ -4,7 +4,6 @@ import com.devteria.identity_service.dto.request.ApiResponse;
 import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.respone.UserResponse;
-import com.devteria.identity_service.dto.respone.UserResponse;
 import com.devteria.identity_service.entity.User;
 import com.devteria.identity_service.service.UserService;
 import jakarta.validation.Valid;
@@ -22,16 +21,15 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class    UserController {
+public class UserController {
 
     UserService userService;
 
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) { // khai bao cho famework biet rang co validate o ham UserCreationRequest
-        ApiResponse<User> apiResponse = new ApiResponse<>();
-
-        apiResponse.setResult(userService.createUser(request));
-        return apiResponse;
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) { // khai bao cho famework biet rang co validate o ham UserCreationRequest
+        return  ApiResponse.<UserResponse>builder()
+                .result(userService.createUser(request))
+                .build();
     }
 
     @GetMapping
@@ -59,6 +57,15 @@ public class    UserController {
                 .result(userService.updateUser(userId, request))
                 .build();
     }
+
+    @GetMapping("/MyInfo")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
+    }
+
+
 
     @DeleteMapping("/{userId}")
     ApiResponse<String> deleteUser(@PathVariable String userId) {

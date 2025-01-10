@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration //
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // Cấu hình dường dẫn đươc bảo vệ chạy bình thường
@@ -29,18 +31,19 @@ public class SecurityConfig {
     @NonFinal
     @Value("${jwt.signerKey}") // Bien nay dung doc tu file .yaml
     protected String singerKey ;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/users")
-                        .hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated());
 
         // Convert role && ma hoa key
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtConfigurerConverter())));
+                        .jwtAuthenticationConverter(jwtConfigurerConverter()))
+                        .authenticationEntryPoint(new jwtAuthenticationEntryPoint())
+        );
 
         // Bảo vệ bảo vệ khi code sai/ tắt
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

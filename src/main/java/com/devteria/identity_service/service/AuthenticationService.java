@@ -110,10 +110,10 @@ public class AuthenticationService {
     // Create scope
     String buidScope(User user) {
         StringJoiner  stringJoiner = new StringJoiner(" ");
-        // kiem tra empty ko
-        if (!CollectionUtils.isEmpty(user.getRoles())) {
-            user.getRoles().forEach(stringJoiner::add);
-        }
+//        // kiem tra empty ko
+//        if (!CollectionUtils.isEmpty(user.getRoles())) {
+//            user.getRoles().forEach(stringJoiner::add);
+//        }
 
         return  stringJoiner.toString();
 
