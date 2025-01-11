@@ -2,6 +2,7 @@ package com.devteria.identity_service.configuration;
 
 import com.devteria.identity_service.enums.Role;
 import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
 
     // Cấu hình dường dẫn đươc bảo vệ chạy bình thường
-    private final String[] PUBLIC_ENPOINTS = {"/users","auth/token","auth/introspect"};
-    @NonFinal
-    @Value("${jwt.signerKey}") // Bien nay dung doc tu file .yaml
-    protected String singerKey ;
+    private final String[] PUBLIC_ENPOINTS =
+            {"/users","auth/token","auth/introspect","auth/logout"};
+
+    @Autowired
+    private  CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -40,7 +42,7 @@ public class SecurityConfig {
 
         // Convert role && ma hoa key
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtConfigurerConverter()))
                         .authenticationEntryPoint(new jwtAuthenticationEntryPoint())
         );
@@ -61,15 +63,6 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    // dung de biet co hop le hay khong
-    @Bean
-    JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(singerKey.getBytes(),"HS512");
-       return NimbusJwtDecoder
-               .withSecretKey(secretKeySpec)
-               .macAlgorithm(MacAlgorithm.HS512)
-               .build();
-    }
 
     // Khai bao cho toan project de dung
     @Bean
