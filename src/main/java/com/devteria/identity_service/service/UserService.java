@@ -8,6 +8,7 @@ import com.devteria.identity_service.enums.Role;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.mapper.UserMapper;
+import com.devteria.identity_service.repository.RoleRepository;
 import com.devteria.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor // final, Autowired
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-
+    RoleRepository roleRepository;
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
@@ -65,6 +66,10 @@ public class UserService {
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("users not found"));
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -74,7 +79,8 @@ public class UserService {
     }
 
     // Phân quyền trước khi thực hiện một phương thưc
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')") // No se tim den ROLE_
+    @PreAuthorize("hasAuthority('APPROVE_DATA')")
     public List<UserResponse> getUsers() {
         log.info("In method getUsers");
         // Đẩy tất cả users lên repo
