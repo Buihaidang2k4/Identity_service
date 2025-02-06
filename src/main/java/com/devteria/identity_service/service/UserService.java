@@ -13,6 +13,7 @@ import com.devteria.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -37,6 +38,13 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
+        log.info("Service:  In method createUser");
+
+        // Kiểm tra user đã tồn tại chưa
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
         User user = userMapper.toUser(request); // Thay thế cho đoạn khởi tạo ở dưới
         // Ma hoa mat khau Bcrypt
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -54,6 +62,7 @@ public class UserService {
 
         return userMapper.toUserResponse(user);
     }
+
     public  UserResponse getMyInfo(){
         var context =  SecurityContextHolder.getContext();
         String name =  context.getAuthentication().getName();

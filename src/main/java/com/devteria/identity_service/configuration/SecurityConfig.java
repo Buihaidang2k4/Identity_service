@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     // Cấu hình dường dẫn đươc bảo vệ chạy bình thường
     private final String[] PUBLIC_ENPOINTS =
-            {"/users","auth/token","auth/introspect","auth/logout"};
+            {"/users","auth/token","auth/introspect","auth/logout","auth/refresh"};
 
     @Autowired
     private  CustomJwtDecoder customJwtDecoder;
