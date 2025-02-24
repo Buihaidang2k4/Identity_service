@@ -1,5 +1,15 @@
 package com.devteria.identity_service.service;
 
+import java.util.HashSet;
+import java.util.List;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.respone.UserResponse;
@@ -10,22 +20,11 @@ import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.mapper.UserMapper;
 import com.devteria.identity_service.repository.RoleRepository;
 import com.devteria.identity_service.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -52,7 +51,7 @@ public class UserService {
         // set permissions on creation
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
-//        user.setRoles(roles);
+        //        user.setRoles(roles);
 
         try {
             user = userRepository.save(user);
@@ -63,11 +62,10 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public  UserResponse getMyInfo(){
-        var context =  SecurityContextHolder.getContext();
-        String name =  context.getAuthentication().getName();
-        User user = userRepository.findByUsername(name).
-                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
@@ -88,7 +86,7 @@ public class UserService {
     }
 
     // Phân quyền trước khi thực hiện một phương thưc
-//    @PreAuthorize("hasRole('ADMIN')") // No se tim den ROLE_
+    //    @PreAuthorize("hasRole('ADMIN')") // No se tim den ROLE_
     @PreAuthorize("hasAuthority('APPROVE_DATA')")
     public List<UserResponse> getUsers() {
         log.info("In method getUsers");

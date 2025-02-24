@@ -2,6 +2,7 @@ package com.devteria.identity_service.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,5 +18,4 @@ public class Permission {
     String name;
 
     String description;
-
 }

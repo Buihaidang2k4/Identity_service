@@ -1,14 +1,11 @@
 package com.devteria.identity_service.dto.request;
 
-import com.devteria.identity_service.exception.ErrorCode;
-import jakarta.validation.constraints.Past;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-//@Getter // Auto generate getter (Lombok)
-//@Setter
 
 @Data // Auto create getter setter constructor toString
 @Builder
@@ -22,6 +19,7 @@ public class UserCreationRequest {
     // Khai bao validation cho password
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
+
     String firstname;
     String lastname;
     LocalDate dob;

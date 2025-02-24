@@ -1,11 +1,12 @@
 package com.devteria.identity_service.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Setter
 @Getter
@@ -18,6 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID) // Chuoi ngau nhien
     String id;
+
     String username;
     String password;
     String firstname;

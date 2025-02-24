@@ -1,11 +1,11 @@
 package com.devteria.identity_service.dto.respone;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.security.Permission;
-import java.util.Set;
 
 // Cung cap thong tin dang nhap
 @Data
