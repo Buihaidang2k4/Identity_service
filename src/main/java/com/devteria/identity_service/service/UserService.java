@@ -3,6 +3,8 @@ package com.devteria.identity_service.service;
 import java.util.HashSet;
 import java.util.List;
 
+import com.devteria.identity_service.constant.PredefinedRole;
+import com.devteria.identity_service.entity.Role;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +16,6 @@ import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.respone.UserResponse;
 import com.devteria.identity_service.entity.User;
-import com.devteria.identity_service.enums.Role;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
 import com.devteria.identity_service.mapper.UserMapper;
@@ -37,27 +38,22 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
-        log.info("Service:  In method createUser");
-
-        // Kiểm tra user đã tồn tại chưa
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
-
         User user = userMapper.toUser(request); // Thay thế cho đoạn khởi tạo ở dưới
         // Ma hoa mat khau Bcrypt
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // set permissions on creation
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-        //        user.setRoles(roles);
 
+        // set permissions on creation
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(e -> roles.add(e));
+
+        user.setRoles(roles);
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+
 
         return userMapper.toUserResponse(user);
     }
