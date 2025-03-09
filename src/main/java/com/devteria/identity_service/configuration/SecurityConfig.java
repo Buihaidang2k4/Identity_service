@@ -16,14 +16,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-
 @Configuration //
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
     // Cấu hình dường dẫn đươc bảo vệ chạy bình thường
-    private static final String[] PUBLIC_ENPOINTS = {"/users", "auth/token", "auth/introspect", "auth/logout", "auth/refresh"};
+    private static final String[] PUBLIC_ENPOINTS = {
+        "/users", "auth/token", "auth/introspect", "auth/logout", "auth/refresh"
+    };
 
     private final CustomJwtDecoder customJwtDecoder;
 
@@ -63,7 +64,6 @@ public class SecurityConfig {
 
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
-
 
     // Convert SCOPE to ROLE
     @Bean

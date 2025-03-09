@@ -47,7 +47,7 @@ public class AuthenticationService {
 
     @NonFinal // ko import vao contructor
     @Value("${jwt.signerKey}") // Bien nay dung doc tu file .yaml
-    protected  String SIGNER_KEY;
+    protected String SIGNER_KEY;
 
     @NonFinal // ko import vao contructor
     @Value("${jwt.valid-duration}") // Bien nay dung doc tu file .yaml
@@ -72,7 +72,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationRespone authenticate(AuthenticationRequest request) {
-        log.info("SignKey: {}",SIGNER_KEY);
+        log.info("SignKey: {}", SIGNER_KEY);
 
         var user = userRepository
                 .findByUsername(request.getUsername())

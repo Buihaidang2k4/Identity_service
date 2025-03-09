@@ -3,8 +3,6 @@ package com.devteria.identity_service.service;
 import java.util.HashSet;
 import java.util.List;
 
-import com.devteria.identity_service.constant.PredefinedRole;
-import com.devteria.identity_service.entity.Role;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,9 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.devteria.identity_service.constant.PredefinedRole;
 import com.devteria.identity_service.dto.request.UserCreationRequest;
 import com.devteria.identity_service.dto.request.UserUpdateRequest;
 import com.devteria.identity_service.dto.respone.UserResponse;
+import com.devteria.identity_service.entity.Role;
 import com.devteria.identity_service.entity.User;
 import com.devteria.identity_service.exception.AppException;
 import com.devteria.identity_service.exception.ErrorCode;
@@ -42,7 +42,6 @@ public class UserService {
         // Ma hoa mat khau Bcrypt
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-
         // set permissions on creation
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(e -> roles.add(e));
@@ -53,7 +52,6 @@ public class UserService {
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-
 
         return userMapper.toUserResponse(user);
     }
